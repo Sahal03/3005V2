@@ -29,7 +29,7 @@ create table trainers
 create table availabilities
     (
         trainer_id int,
-        Day DATE not null,
+        day DATE not null,
         start_time TIME not null,
         end_time TIME not null,
         foreign key(trainer_id) references trainers
@@ -71,7 +71,7 @@ create table classes
         primary key(class_id)
     );
 
-create table Equipment
+create table equipments
     (
         equipment_id SERIAL,
         name varchar(255) not null,
