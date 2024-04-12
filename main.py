@@ -16,12 +16,53 @@ conn.autocommit = True
 cursor = conn.cursor()
 
 # create table
-# cursor.execute(open("scripts/initializer.sql","r").read())
+cursor.execute(open("scripts/initializer.sql","r").read())
 
 # populate sample data
-# cursor.execute(open("scripts/populateDummy.sql","r").read())
-# connection.commit()
+cursor.execute(open("scripts/populateDummy.sql","r").read())
 
-t1 = Trainer("Sahal","Aidid","911","25000",cursor)
+def mainMenu():
+    # initial prompt user
+    print("1. Member")
+    print("2. Trainer")
+    print("3. Admin")
+    print("4. Press 4 or any key to exit.")
+    choice = input("Select Your Type of User: ")
+
+    if choice == '1':
+        memberPrompt()
+    elif choice == '2':
+        trainerPrompt()
+    elif choice == '3':
+        adminPrompt()
+    else:
+        print("Have a good day")
+
+def memberPrompt():
+    return
+
+def trainerPrompt():
+    email = input("Please enter your email to sign in: ")
+    trainer = None
+    cursor.execute("SELECT * FROM trainers WHERE email=%s",(email,))
+
+    trainerResult = cursor.fetchone()
+
+    if trainerResult is None:
+        print("Trainer not found")
+        choice = input("Press 1 to try again or anykey to return to main menu.")
+        if choice == '1':
+            trainerPrompt()
+        else:
+            mainMenu()
+    else:
+        trainer = Trainer(trainerResult[0],trainerResult[1],trainerResult[2],trainerResult[3],trainerResult[4],cursor)
+        trainer.profile()
+        mainMenu()
+
+def adminPrompt():
+    return
+
+mainMenu()
 cursor.close()
 conn.close()

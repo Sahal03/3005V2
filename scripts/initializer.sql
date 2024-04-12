@@ -3,7 +3,7 @@ create table members
         member_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        phone_number varchar(15),
+        email varchar (255) unique not null,
         primary key(member_id)
     );
 
@@ -21,7 +21,7 @@ create table trainers
         trainer_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        phone_number varchar(15),
+        email varchar (255) unique not null,
         salary FLOAT,
         primary key(trainer_id)
     );
@@ -42,6 +42,7 @@ create table admins
         position varchar(255),
         last_name varchar(255) not null,
         first_name varchar(255) not null,
+        email varchar (255) unique not null,
         primary key(admin_id)
     );
 
