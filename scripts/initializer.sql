@@ -3,7 +3,7 @@ create table if not exists members
         member_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        email varchar(15),
+        email varchar(255),
         primary key(member_id)
     );
 
@@ -21,7 +21,7 @@ create table if not exists trainers
         trainer_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        phone_number varchar(15),
+        email varchar(255),
         salary FLOAT,
         primary key(trainer_id)
     );
@@ -29,7 +29,7 @@ create table if not exists trainers
 create table if not exists availabilities
     (
         trainer_id int,
-        Day DATE not null,
+        day DATE not null,
         start_time TIME not null,
         end_time TIME not null,
         foreign key(trainer_id) references trainers
