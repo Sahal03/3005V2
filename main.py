@@ -19,7 +19,7 @@ cursor = conn.cursor()
 cursor.execute(open("scripts/initializer.sql","r").read())
 
 # populate sample data
-cursor.execute(open("scripts/populateDummy.sql","r").read())
+# cursor.execute(open("scripts/populateDummy.sql","r").read())
 
 def mainMenu():
     # initial prompt user
