@@ -1,9 +1,11 @@
 import psycopg2 as ps
 from entities.Trainer import Trainer
+from entities.Admins import Admins
+
 #Needed Credentials to access the db
 DB_NAME = "V2"
 DB_USER = "postgres"
-DB_PASS = "admin"
+DB_PASS = "aaryan"
 DB_HOST = "localhost"
 DB_PORT = 5432
 
@@ -61,7 +63,23 @@ def trainerPrompt():
         mainMenu()
 
 def adminPrompt():
-    return
+    email = input("Please enter your email to sign in: ")
+    admin = None
+    cursor.execute("SELECT * FROM admins WHERE email= %s",(email,))
+    
+    adminsResult = cursor.fetchone()
+    
+    if adminsResult is None:
+        print("Admin not found")
+        choice = input("Press 1 to try again or anykey to return to main menu.")
+        if choice == '1':
+            trainerPrompt()
+        else:
+            mainMenu()
+    else:
+        admin = Admins(adminsResult[0],adminsResult[1],adminsResult[2],adminsResult[3],adminsResult[4],adminsResult[5],cursor)
+        admin.profile()
+        mainMenu()
 
 mainMenu()
 cursor.close()

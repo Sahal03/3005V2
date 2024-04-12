@@ -39,25 +39,25 @@ ON CONFLICT DO NOTHING;
 -- ON CONFLICT DO NOTHING;
 
 INSERT INTO admins
-(salary,position,last_name,first_name) VALUES 
-(250000,'HR','Smith','John'),
-(300000,'CEO','Smith','June'),
-(275000,'CFO','Smith','Bob')
+(email,salary,position,last_name,first_name) VALUES 
+('J@gmail.com',250000,'HR','Smith','John'),
+('A@gmail.com',300000,'CEO','Smith','June'),
+('B@gmail.com',275000,'CFO','Smith','Bob')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO rooms
 (room_number,name,status) VALUES
-(101,'Party','Available'),
-(102,'Party_2','Available'),
-(103,'Party_3','Available')
+(101,'Party',False),
+(102,'Party_2',False),
+(103,'Party_3',False)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO Equipment
 (name,status) VALUES
-('10LB Dumbell','Available'),
-('10LB Dumbell','Available'),
-('25LB Dumbell','Available'),
-('25LB Dumbell','Available'),
-('50LB Dumbell','Available'),
-('50LB Dumbell','Available')
+('10LB Dumbell',True),
+('10LB Dumbell',True),
+('25LB Dumbell',True),
+('25LB Dumbell',True),
+('50LB Dumbell',True),
+('50LB Dumbell',False)
 ON CONFLICT DO NOTHING;
