@@ -2,7 +2,13 @@ import psycopg2 as psy
 
 class Admins:
     def __init__(self,ID,EMAIL,Salary,Position,last_Name,first_Name,Database):
-        self.ID = ID
+        
+        if ID == None:
+            self.cur.execute("INSERT INTO admins (email, salary, position, last_Name, first_Name) VALUES (%s, %s, %s, %s, %s)", (EMAIL, Salary, Position, last_Name, first_Name))
+            self.ID = self.cursor.execute("SELECT admin_id FROM admins ORDER BY admin_id DESC LIMIT 1;")
+        else:
+            self.ID=ID
+            
         self.EMAIL = EMAIL
         self.Salary = Salary
         self.Position = Position
@@ -10,21 +16,22 @@ class Admins:
         self.First_Name = first_Name
         
         self.cur = Database
-        self.cur.execute("INSERT INTO admins (admin_id, email, salary, position, last_Name, first_Name) VALUES (%s, %s, %s, %s, %s, %s)", (ID, EMAIL, Salary, Position, last_Name, first_Name))
+        
                         
 
-    def profile(self,command):
+    def profile(self):
         print("Welcome Admin() " + self.First_Name + ":")
+        command = input("Please enter I for INFO: ")
         if command is "I" or "INFO":
-            print("Please select what info you'd like to update from the following:")
-            name = input("(F)irst Name, (L)ast Name, (E)mail, (S)alary, (P)osition")
+            print("Please select what info you'd like to update from the following: ")
+            name = input("(F)irst Name, (L)ast Name, (E)mail, (S)alary, (P)osition: ")
             if (name.upper() == "F"):
                 new_first = input("Please enter new First Name: ")
-                self.change_name(self,new_first,True)
+                self.change_name(new_first,True)
             
             elif(name.upper() == "L"):
                 new_last = input("Please enter new Last Name: ")
-                self.change_name(self,new_last,False)
+                self.change_name(new_last,False)
 
             elif(name.upper() == "E"):
                 new_email = input("Please enter a new email: ")
@@ -39,21 +46,23 @@ class Admins:
                 self.update_position(self,new_pos)
 
         
-    def change_name(self,new_name,F_or_L,ID):
+    def change_name(self,new_name,F_or_L):
         if(F_or_L == True):
             try:
                 self.cur.execute("""
-                UPDATE Admin SET first_Name = %s 
-                """, (new_name))
+                UPDATE admins SET first_name = %s
+                WHERE admin_id = %s 
+                """, (new_name,self.ID))
                 print("First name successfully updated to " + new_name)            
-            except Exception:
-                print("Failed to update first name!")
+            except Exception as e:
+                print("Failed to update first name! : " + e)
 
         else:
             try:
                 self.cur.execute("""
-                UPDATE Admin SET last_Name = %s 
-                """, (new_name))
+                UPDATE admins SET last_name = %s 
+                WHERE admin_id = %s
+                """, (new_name,self.ID))
                 print("Last name successfully updated to " + new_name)            
             except Exception:
                 print("Failed to update last name!")
@@ -107,10 +116,12 @@ class Admins:
                 print("Failed to book room!")
     
     def equipment_check(self,equipment_id):
-        if self.cur.execute("""SELECT status FROM equipments WHERE equipment_id = %s""", (equipment_id)) is not None : 
+        if self.cur.execute("""SELECT status FROM Equipment WHERE equipment_id = %s""", (equipment_id)) is not None : 
             print("Equipment functional")
         else:
             print("Equipment under maintenance")
+            
+    # def class_update():
             
 
 

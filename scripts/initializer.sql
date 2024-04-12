@@ -1,3 +1,13 @@
+DROP TABLE goals;
+DROP TABLE members;
+DROP TABLE availabilities;
+DROP TABLE trainers;
+DROP TABLE schedules;
+DROP TABLE rooms;
+DROP TABLE admins;
+DROP TABLE classes;
+DROP TABLE Equipment;
+
 create table if not exists members 
     (
         member_id SERIAL,
@@ -38,6 +48,7 @@ create table if not exists availabilities
 create table if not exists admins
     (
         admin_id SERIAL,
+        email varchar(255),
         salary FLOAT,
         position varchar(255),
         last_name varchar(255) not null,

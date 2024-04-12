@@ -39,10 +39,10 @@ ON CONFLICT DO NOTHING;
 -- ON CONFLICT DO NOTHING;
 
 INSERT INTO admins
-(salary,position,last_name,first_name) VALUES 
-(250000,'HR','Smith','John'),
-(300000,'CEO','Smith','June'),
-(275000,'CFO','Smith','Bob')
+(email,salary,position,last_name,first_name) VALUES 
+('J@gmail.com',250000,'HR','Smith','John'),
+('A@gmail.com',300000,'CEO','Smith','June'),
+('B@gmail.com',275000,'CFO','Smith','Bob')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO rooms
