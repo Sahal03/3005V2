@@ -62,7 +62,7 @@ class Trainer:
         lName = input("Enter the member's last name: ")
 
         # execute query
-        self.cursor.execute("SELECT * FROM members WHERE first_name=%s,last_name=%s",(fName,lName))
+        self.cursor.execute("SELECT * FROM members WHERE first_name=%s AND last_name=%s",(fName,lName))
         result = self.cursor.fetchall()
 
         #print result
