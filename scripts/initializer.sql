@@ -60,7 +60,7 @@ create table if not exists rooms
     (
         room_number int not null unique,
         name varchar(255),
-        status varchar(255),
+        status boolean,
         primary key(room_number)
     );
 
@@ -86,5 +86,5 @@ create table if not exists Equipment
     (
         equipment_id SERIAL,
         name varchar(255) not null,
-        status varchar(255)
+        status boolean
     );

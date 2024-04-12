@@ -47,17 +47,17 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO rooms
 (room_number,name,status) VALUES
-(101,'Party','Available'),
-(102,'Party_2','Available'),
-(103,'Party_3','Available')
+(101,'Party',False),
+(102,'Party_2',False),
+(103,'Party_3',False)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO Equipment
 (name,status) VALUES
-('10LB Dumbell','Available'),
-('10LB Dumbell','Available'),
-('25LB Dumbell','Available'),
-('25LB Dumbell','Available'),
-('50LB Dumbell','Available'),
-('50LB Dumbell','Available')
+('10LB Dumbell',True),
+('10LB Dumbell',True),
+('25LB Dumbell',True),
+('25LB Dumbell',True),
+('50LB Dumbell',True),
+('50LB Dumbell',False)
 ON CONFLICT DO NOTHING;
