@@ -1,22 +1,22 @@
-create table members 
+create table if not exists members 
     (
         member_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        phone_number varchar(15),
+        email varchar(15),
         primary key(member_id)
     );
 
-create table goals
+create table if not exists goals
     (
        member_id int, 
        weight FLOAT,
-       time DATE,
+       time int,
        streak int ,
        foreign key(member_id) references members
     );
 
-create table trainers
+create table if not exists trainers
     (
         trainer_id SERIAL,
         first_name varchar(255) not null,
@@ -26,16 +26,16 @@ create table trainers
         primary key(trainer_id)
     );
 
-create table availabilities
+create table if not exists availabilities
     (
         trainer_id int,
-        day DATE not null,
+        Day DATE not null,
         start_time TIME not null,
         end_time TIME not null,
         foreign key(trainer_id) references trainers
     );
 
-create table admins
+create table if not exists admins
     (
         admin_id SERIAL,
         salary FLOAT,
@@ -45,7 +45,7 @@ create table admins
         primary key(admin_id)
     );
 
-create table rooms
+create table if not exists rooms
     (
         room_number int not null unique,
         name varchar(255),
@@ -53,7 +53,7 @@ create table rooms
         primary key(room_number)
     );
 
-create table schedules
+create table if not exists schedules
     (
         schedule_id SERIAL,
         room_number int not null,
@@ -61,7 +61,7 @@ create table schedules
         foreign key(room_number) references rooms
     );
 
-create table classes 
+create table if not exists classes 
     (
         class_id SERIAL,
         instructor varchar(255) not null,
@@ -71,7 +71,7 @@ create table classes
         primary key(class_id)
     );
 
-create table equipments
+create table if not exists Equipment
     (
         equipment_id SERIAL,
         name varchar(255) not null,
