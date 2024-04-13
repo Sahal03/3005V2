@@ -5,7 +5,7 @@ from entities.Member import Member
 #Needed Credentials to access the db
 DB_NAME = "V2"
 DB_USER = "postgres"
-DB_PASS = "aaryan"
+DB_PASS = "069359"
 DB_HOST = "localhost"
 DB_PORT = 5432
 
@@ -43,7 +43,7 @@ def mainMenu():
 def memberPrompt():
     email = input("Please enter your email to sign in: ")
     member = None
-    cursor.execute("SELECT * FROM trainers WHERE email=%s",(email,))
+    cursor.execute("SELECT * FROM members WHERE email= %s", (email,))
 
     memberResult = cursor.fetchone()
 
@@ -63,7 +63,7 @@ def memberPrompt():
         else:
             mainMenu()
     else:
-        member = Member(memberResult[1],memberResult[2],memberResult[3],cursor)
+        member = Member(memberResult[1],memberResult[2],memberResult[3],cursor, False)
         member.ui()
         mainMenu()
 
@@ -71,7 +71,7 @@ def registerMember(member):
     fName = input("Please enter your first name: ")
     lName = input("Please enter your last name: ")
     email = input("Please enter your email: ")
-    member = Member(fName,lName,email,cursor)
+    member = Member(fName,lName,email,cursor, True)
     member.ui()
     mainMenu()
 

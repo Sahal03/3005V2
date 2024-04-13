@@ -1,13 +1,15 @@
 DROP TABLE goals;
+DROP TABLE health;
 DROP TABLE members;
 DROP TABLE availabilities;
 DROP TABLE trainers;
-DROP TABLE schedules;
 DROP TABLE rooms;
 DROP TABLE admins;
 DROP TABLE classes;
 DROP TABLE Equipment;
-
+DROP TABLE exercise_routines;
+DROP TABLE fitness_achievement;
+DROP TABLE health_statistics;
 create table if not exists members 
     (
         member_id SERIAL,
