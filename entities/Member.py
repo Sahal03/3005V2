@@ -1,13 +1,4 @@
-
 import psycopg2 as ps
-
-
-#Needed Credentials to access the db
-DB_NAME = "V2"
-DB_USER = "postgres"
-DB_PASS = "069359"
-DB_HOST = "localhost"
-DB_PORT = 5432
 
 class Member:
     def __init__(self, fName, lName, EMAIL, db, register):
@@ -91,16 +82,16 @@ class Member:
             self.schedule_ui()
 
     def dashboard(self, command):
-        if command.upper() == "E" or "EXERCISE" or "EXERCISE ROUTINES":
+        if command.upper() == "E":
             print("Please look at the following routines! \n")
             self.display_exercise()
-        elif command.upper() == "F" or "FITNESS" or "FITNESS ACHIEVEMENTS":
+        elif command.upper() == "F":
             print("Please look at what the different achievements! \n")
             self.display_fitness()
-        elif command.upper() == "H" or "HEALTH" or "STATISTICS":
+        elif command.upper() == "H":
             print("Please look at the following health statistics! \n")
             self.display_health()
-        elif command.upper() == "M" or "MAIN" or "MENU":
+        elif command.upper() == "M":
             self.ui()
         else:
             print("Unknown command, please try again...")
@@ -115,16 +106,16 @@ class Member:
             self.dashboard(param)
     
     def profile(self, command):
-        if command.upper() == "U" or "UPDATE" or "UPDATE PERSONAL INFORMATION":
+        if command.upper() == "U":
             print("Please Select what info you'd like to update from the following:")
             self.update_personal()
-        elif command.upper() == "F" or "FITNESS" or "GOALS" or "FITNESS GOALS":
+        elif command.upper() == "F":
             print("Please select what goals you'd like to update from the following:")
             self.update_goal()
-        elif command.upper() == "H" or "HEALTH" or "HEALTH METRICS":
+        elif command.upper() == "H":
             print("Please select what health metrics you'd like to update from the following:")
             self.update_health()
-        elif command.upper() == "M" or "MAIN" or "MENU":
+        elif command.upper() == "M":
             self.ui()
         else:
             print("Unknown command, please try again...")
@@ -139,10 +130,10 @@ class Member:
         self.profile(param)
     
     def schedule(self, command):
-        if command == "T" or "TRAINER":
+        if command.upper() == "T":
             print("Please select a suitable time: ")
             self.schedule_trainer()
-        elif command == "G" or "GROUP":
+        elif command.upper() == "G":
             print("Please select a group session")
             self.schedule_group()
         else:
