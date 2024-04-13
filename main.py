@@ -63,6 +63,7 @@ def memberPrompt():
         else:
             mainMenu()
     else:
+        print(memberResult)
         member = Member(memberResult[1],memberResult[2],memberResult[3],cursor, False)
         member.ui()
         mainMenu()

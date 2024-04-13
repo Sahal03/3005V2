@@ -11,41 +11,51 @@ DB_PORT = 5432
 
 class Member:
     def __init__(self, fName, lName, EMAIL, db, register):
-        if not register:
-            self.fName = db.execute("SELECT first_name FROM members WHERE email = %s;", (EMAIL,))
-            self.lName = db.execute("SELECT last_name FROM members WHERE email = %s;", (EMAIL,))
+        if register == False:
+            db.execute("SELECT first_name FROM members WHERE email = %s", (EMAIL,))
+            self.fName = db.fetchone()[0]
+            db.execute("SELECT last_name FROM members WHERE email = %s;", (EMAIL,))
+            self.lName = db.fetchone()[0]
             self.EMAIL = EMAIL
             self.db = db
-            self.ID = db.execute("SELECT member_id FROM members WHERE email = %s;", (EMAIL,))
-            self.goalWeight = db.execute("""SELECT g.weight
+            db.execute("SELECT member_id FROM members WHERE email = %s;", (EMAIL,))
+            self.ID = db.fetchone()[0]
+            db.execute("""SELECT g.weight
                                             FROM goals AS g
                                             INNER JOIN members AS m ON g.member_id = m.member_id
                                             WHERE m.member_id = %s;""", (self.ID,))
-            self.goalTime = db.execute("""SELECT g.time
+            self.goalWeight = db.fetchone()[0]
+            db.execute("""SELECT g.time
                                             FROM goals AS g
                                             INNER JOIN members AS m ON g.member_id = m.member_id
                                             WHERE m.member_id = %s;""", (self.ID,))
-            self.goalStreak = db.execute("""SELECT g.streak
+            self.goalTime = db.fetchone()[0]
+            db.execute("""SELECT g.streak
                                             FROM goals AS g
                                             INNER JOIN members AS m ON g.member_id = m.member_id
                                             WHERE m.member_id = %s;""", (self.ID,))
+            self.goalStreak = db.fetchone()[0]
             
-            self.average_bpm = db.execute("""SELECT h.average_bpm
+            db.execute("""SELECT h.average_bpm
                                             FROM health as h
                                             INNER JOIN members as m on h.member_id = m.member_id
                                             WHERE m.member_id = %s;""", (self.ID,))
-            self.muscle = db.execute("""SELECT h.muscle_mass
+            self.average_bpm = db.fetchone()[0]
+            db.execute("""SELECT h.muscle_mass
                                         FROM health as h
                                         INNER JOIN members as m on h.member_id = m.member_id
                                         WHERE m.member_id = %s;""", (self.ID,))
-            self.weight = db.execute("""SELECT h.weight
+            self.muscle = db.fetchone()[0]
+            db.execute("""SELECT h.weight
                                         FROM health as h
                                         INNER JOIN members as m on h.member_id = m.member_id
                                         WHERE m.member_id = %s;""", (self.ID,))
-            self.bmi = db.execute("""SELECT h.bmi
+            self.weight = db.fetchone()[0]
+            db.execute("""SELECT h.bmi
                                     FROM health as h
                                     INNER JOIN members as m on h.member_id = m.member_id
                                     WHERE m.member_id = %s;""", (self.ID,))
+            self.bmi = db.fetchone()[0]
 
         else:
             self.fName = fName
@@ -62,7 +72,6 @@ class Member:
 
             db.execute("INSERT INTO members (fName, lName, email) VALUES (%s, %s, %s)", (fName, lName, EMAIL))
             self.ID = db.fetchone()[0]
-            print(self.ID)
             db.execute("INSERT INTO goals (member_id, weight, time, streak) VALUES (%s,%s,%s,%s)", (self.ID, self.goalWeight, self.goalTime, self.goalStreak))
             db.execute("INSERT INTO health (member_id, average_bpm, muscle_mass, weight, bmi) VALUES (%s,%s,%s,%s,%s)", (self.ID, self.average_bpm, self.muscle, self.weight, self.bmi))
             
@@ -82,16 +91,16 @@ class Member:
             self.schedule_ui()
 
     def dashboard(self, command):
-        if command == "E" or "EXERCISE" or "EXERCISE ROUTINES":
+        if command.upper() == "E" or "EXERCISE" or "EXERCISE ROUTINES":
             print("Please look at the following routines! \n")
-            self.display_exercise(self)
-        elif command == "F" or "FITNESS" or "FITNESS ACHIEVEMENTS":
+            self.display_exercise()
+        elif command.upper() == "F" or "FITNESS" or "FITNESS ACHIEVEMENTS":
             print("Please look at what the different achievements! \n")
-            self.display_fitness(self)
-        elif command == "H" or "HEALTH" or "STATISTICS":
+            self.display_fitness()
+        elif command.upper() == "H" or "HEALTH" or "STATISTICS":
             print("Please look at the following health statistics! \n")
-            self.display_health(self)
-        elif command == "M" or "MAIN" or "MENU":
+            self.display_health()
+        elif command.upper() == "M" or "MAIN" or "MENU":
             self.ui()
         else:
             print("Unknown command, please try again...")
@@ -106,16 +115,16 @@ class Member:
             self.dashboard(param)
     
     def profile(self, command):
-        if command == "U" or "UPDATE" or "UPDATE PERSONAL INFORMATION":
+        if command.upper() == "U" or "UPDATE" or "UPDATE PERSONAL INFORMATION":
             print("Please Select what info you'd like to update from the following:")
-            self.update_personal(self)
-        elif command == "F" or "FITNESS" or "GOALS" or "FITNESS GOALS":
+            self.update_personal()
+        elif command.upper() == "F" or "FITNESS" or "GOALS" or "FITNESS GOALS":
             print("Please select what goals you'd like to update from the following:")
-            self.update_goal(self)
-        elif command == "H" or "HEALTH" or "HEALTH METRICS":
+            self.update_goal()
+        elif command.upper() == "H" or "HEALTH" or "HEALTH METRICS":
             print("Please select what health metrics you'd like to update from the following:")
-            self.update_health(self)
-        elif command == "M" or "MAIN" or "MENU":
+            self.update_health()
+        elif command.upper() == "M" or "MAIN" or "MENU":
             self.ui()
         else:
             print("Unknown command, please try again...")
@@ -132,10 +141,10 @@ class Member:
     def schedule(self, command):
         if command == "T" or "TRAINER":
             print("Please select a suitable time: ")
-            self.schedule_trainer(self)
+            self.schedule_trainer()
         elif command == "G" or "GROUP":
             print("Please select a group session")
-            self.schedule_group(self)
+            self.schedule_group()
         else:
             print("Unknown command, please try again...")
             self.schedule_ui()
@@ -148,38 +157,46 @@ class Member:
         self.schedule(param)
     
     def schedule_trainer(self):
-        availabilities = self.db.execute("""SELECT t.first_name, t.last_name, a.Day, a.start_time, a.end_time
+        self.db.execute("""SELECT t.first_name, t.last_name, a.Day, a.start_time, a.end_time
                         FROM trainers AS t
                         JOIN availabilities AS a ON t.trainer_id = a.trainer_id;""")
+        availabilities = self.db.fetchall()
         print(availabilities)
         trainer_name = input("Please select the trainer name that you want: ")
-        trainer_id = self.db.execute("SELECT trainer_id FROM trainers WHERE first_name = %s", (trainer_name,))
+        self.db.execute("SELECT trainer_id FROM trainers WHERE first_name = %s", (trainer_name,))
+        trainer_id = self.db.fetchone()
         trainer_day = input("Please input the day using the format YEAR-MONTH-DAY: ")
         trainer_time = input("Please input the starting hour using the format XX:XX:XX : ")
-        available = self.db.execute("""SELECT available
+        self.db.execute("""SELECT available
                                     FROM availabilities
                                     WHERE trainer_id = %s""", (trainer_id,))
+        available = self.db.fetchone()
         if available:
             self.db.execute("""UPDATE availabilities 
                                 SET available = FALSE 
                                 WHERE trainer_id = %s 
                                 AND day = %s
                                 AND start_time = %s""", (trainer_id, trainer_day, trainer_time))
+            print("You've Scheduled the class!")
         else:
             print("Sorry not available please choose another day...")
-            self.schedule_trainer(self)
+            self.schedule_trainer()
         self.schedule_ui()   
 
     def schedule_group(self):
-        availabilities = self.db.execute("""SELECT c.class_name, c.instructor, c.quantity, c.isFull, a.Day, a.start_time, a.end_time
-                        FROM classes AS c
-                        JOIN availabilities AS a ON c.class_id = a.trainer_id;""")
+        self.db.execute("""SELECT class_name, instructor, quantity, isFull,
+                        FROM classes""")
+        availabilities = self.db.fetchall()
         print(availabilities)
         class_name = input("Please select the class name that you want: ")
-        class_id = self.db.execute("SELECT class_id FROM classes WHERE class_name = %s", (class_name,))
-        available = self.db.execute("SELECT isFull FROM classes WHERE class_id = %s", (class_id,))
-        class_capacity = self.db.execute("SELECT capacity FROM classes WHERE class_name = %s", (class_name,))
-        class_quantity = self.db.execute("SELECT quantity FROM classes WHERE class_name = %s", (class_name,))
+        self.db.execute("SELECT class_id FROM classes WHERE class_name = %s", (class_name,))
+        class_id = self.db.fetchone()[0]
+        self.db.execute("SELECT isFull FROM classes WHERE class_id = %s", (class_id,))
+        available = self.db.fetchone()[0]
+        self.db.execute("SELECT capacity FROM classes WHERE class_name = %s", (class_name,))
+        class_capacity = self.db.fetchone()[0]
+        self.db.execute("SELECT quantity FROM classes WHERE class_name = %s", (class_name,))
+        class_quantity = self.db.fetchone()[0]
         if available:
             if class_capacity < class_quantity:
                 print("You've successfully joined the class!")
@@ -196,7 +213,7 @@ class Member:
                 print("You've successfully joined the class and it is now full!") 
         else:
             print("Sorry not available please choose another class...")
-            self.schedule_group(self) 
+            self.schedule_group() 
         self.schedule_ui() 
 
     def display_exercise(self):
@@ -214,6 +231,7 @@ class Member:
         self.dashboard_ui()
 
     def display_fitness(self):
+        print("HIIIIIIIII")
         self.db.execute("SELECT * FROM fitness_achievement;")
         result = self.db.fetchall()
 
@@ -253,10 +271,11 @@ class Member:
             new_weight = input("Please input new weight: ")
             self.change_health(new_weight, 2)
         elif name.upper() == "B" or name.upper() == "BMI":
-            new_bmi
+            new_bmi = input("Please input new BMI: ")
+            self.change_health(new_bmi, 3)
         else:
             print("Unknown command, please try again...")
-            self.update_personal(self)
+            self.update_personal()
             self.profile_ui()
 
 
@@ -316,15 +335,15 @@ class Member:
 
     def change_name(self, new_name, first_or_last_or_email):
         if first_or_last_or_email == 0:
-            self.db.execute("UPDATE members SET fName = %s WHERE EMAIL = %s", (new_name, self.EMAIL))
+            self.db.execute("UPDATE members SET first_name = %s WHERE EMAIL = %s", (new_name, self.EMAIL))
             self.fName = new_name
         elif first_or_last_or_email == 1:
-            self.db.execute("UPDATE members SET lName = %s WHERE EMAIL = %s", (new_name, self.EMAIL))
+            self.db.execute("UPDATE members SET last_name = %s WHERE EMAIL = %s", (new_name, self.EMAIL))
             self.lName = new_name
         else:
             self.db.execute("""
                             DELETE FROM members WHERE email = %s;
-                            INSERT INTO members (fName, lName, email) VALUES (%s, %s, %s);
+                            INSERT INTO members (first_name, last_name, email) VALUES (%s, %s, %s);
                             """, (self.EMAIL, self.fName, self.lName, new_name))
             self.EMAIL = new_name
 
