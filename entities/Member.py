@@ -9,19 +9,6 @@ DB_PASS = "069359"
 DB_HOST = "localhost"
 DB_PORT = 5432
 
-"""
-try:
-        conn = ps.connect(database=DB_NAME,
-                          user=DB_USER,
-                          password=DB_PASS,
-                          host=DB_HOST,
-                          port=DB_PORT)
-        print("Successful Connection")
-
-except Exception as e:
-    print("Unsuccessful Connection:", e)
-    """
-
 class Member:
     def __init__(self, fName, lName, EMAIL, db):
         exist = db.cursor().execute(f"""SELECT EXISTS (
@@ -49,7 +36,31 @@ class Member:
                                                     INNER JOIN members AS m ON g.member_id = m.member_id
                                                     WHERE m.member_id = {self.ID};""")
             
-            #ADD HEALTH
+            self.average_bpm = db.cursor().execute(f"""
+                                                    SELECT h.average_bpm
+                                                   FROM health as h
+                                                   INNER JOIN members as m on h.member_id = m.member_id
+                                                   WHERE m.member_id = {self.ID}
+                                                    """)
+            self.muscle = db.cursor.execute(f"""
+                                                SELECT h.muscle_mass
+                                                FROM health as h
+                                                INNER JOIN members as m on h.member_id = m.member_id
+                                                WHERE m.member_id = {self.ID}
+                                                    """)
+            self.weight = db.cursor.execute(f"""
+                                                SELECT h.weight
+                                                FROM health as h
+                                                INNER JOIN members as m on h.member_id = m.member_id
+                                                WHERE m.member_id = {self.ID}
+                                                    """)
+            self.bmi = db.cursor.execute(f"""
+                                                SELECT h.bmi
+                                                FROM health as h
+                                                INNER JOIN members as m on h.member_id = m.member_id
+                                                WHERE m.member_id = {self.ID}
+                                                    """)                                          
+                                            
 
         else:
 
@@ -59,14 +70,17 @@ class Member:
             self.goalWeight = "Not set"
             self.goalTime = "Not set"
             self.goalStreak = "Not set"
+            self.average_bpm = "Not set"
+            self.muscle = "Not set"
+            self.weight = "Not set"
+            self.bmi = "Not set"
             self.db = db.cursor()
 
             db.execute("INSERT INTO members (fName, lName, email) VALUES (%s, %s, %s)", fName, lName, EMAIL)
             self.ID = db.cursor().fetchone()[0]
             print(self.ID)
             db.execute(f"INSERT INTO goals (member_id, weight, time, streak) VALUES ({self.ID},{self.goalWeight},{self.goalTime},{self.goalStreak})")
-
-            #ADD HEALTH
+            db.execute(f"INSERT INTO health (member_id, average_bpm, muscle_mass, weight, bmi) VALUES ({self.ID},{self.average_bpm},{self.muscle},{self.weight}, {self.bmi})")
 
     def dashboard(self, command):
         if command == "E" or "EXERCISE" or "EXERCISE ROUTINES":
@@ -108,21 +122,59 @@ class Member:
             self.schedule(self,command)      
 
     def schedule_trainer(self):
-        self.db.execute("""SELECT t.first_name, t.last_name, a.Day, a.start_time, a.end_time
+        availabilities =self.db.execute("""SELECT t.first_name, t.last_name, a.Day, a.start_time, a.end_time
                         FROM trainers AS t
-                        JOIN availabilities AS a ON t.trainer_id = a.trainer_id; """)
+                        JOIN availabilities AS a ON t.trainer_id = a.trainer_id;""")
+        print(availabilities)
         trainer_name = input("Please select the trainer name that you want: ")
-        trainer_day = input("Please input the day: ")
-        trainer_time = input("Please input the starting hour using the format XX:XX : ")
-        #IF STATEMENT, CHECK AVAILABILITY THEN SCHEDULE
-        #if()
-        #SCHEDULE BY CHANGING AVAILABILITY SETTINGS      
+        trainer_id = self.db.execute(f"""SELECT trainer_id FROM trainers WHERE first_name = {trainer_name}""")
+        trainer_day = input("Please input the day using the format YEAR-MONTH-DAY: ")
+        trainer_time = input("Please input the starting hour using the format XX:XX:XX : ")
+        available = self.db.execute(f"""SELECT available
+                                    FROM availabilities
+                                    WHERE trainer_id = {trainer_id}""")
+        if(available):
+            self.db.execute(f""" UPDATE availabilities 
+                                 SET available = FALSE 
+                                 WHERE trainer_id = {trainer_id} 
+                                 AND day = {trainer_day}
+                                 AND start_time = {trainer_time} """)
+        else:
+            print("Sorry not available please choose another day...")
+            self.schedule_trainer(self)     
     
     def schedule_group(self):
-        return "Hi"
-        #CHOOSE SESSION AND ITS INFO
-        #IF STATEMENT, CHECK AVAILABILITY THEN SCHEDULE
-        #SCHEDULE BY CHANGING AVAILABILITY SETTINGS   
+        availabilities =self.db.execute("""SELECT c.class_name, c.instructor, c.quantity, c.isFull, a.Day, a.start_time, a.end_time
+                        FROM classes AS c
+                        JOIN availabilities AS a ON c.class_id = a.trainer_id;""")
+        print(availabilities)
+        class_name = input("Please select the class name that you want: ")
+        class_id = self.db.execute(f"""SELECT class_id FROM classes WHERE class_name = {class_name}""")
+        available = self.db.execute(f"""SELECT isFull
+                                    FROM classes
+                                    WHERE class_id = {class_id}""")
+        class_capacity = self.db.execute(f"SELECT capacity FROM classes WHERE class_name = {class_name}")
+        class_quantity = self.db.execute(f"SELECT quantity FROM classes WHERE class_name = {class_name}")
+        if(available):
+                if(class_capacity < class_quantity):
+                    print("You've successfully joined the class!")
+                    self.db.execute(f""" UPDATE classes
+                                         SET quantity = quantity + 1
+                                         WHERE class_id = {class_id};
+                                         """)  
+                elif(class_capacity == class_quantity + 1):
+                        self.db.execute(f""" UPDATE classes
+                                         SET quantity = quantity + 1
+                                         WHERE class_id = {class_id};
+                                         """)                      
+                        self.db.execute(f""" UPDATE classes 
+                                        SET isFull = TRUE 
+                                        WHERE class_id = {class_id}
+                                        AND """)
+                        print("You've successfully joined the class and it is now full!") 
+        else:
+            print("Sorry not available please choose another class...")
+            self.schedule_group(self)    
 
     def display_exercise(self):
         self.db.execute("SELECT * FROM exercise_routines;")

@@ -83,6 +83,7 @@ create table if not exists availabilities
         day DATE not null,
         start_time TIME not null,
         end_time TIME not null,
+        available boolean,
         foreign key(trainer_id) references trainers
     );
 
@@ -118,6 +119,7 @@ create table if not exists classes
         class_id SERIAL,
         instructor varchar(255) not null,
         quantity int,
+        capacity int,
         class_name varchar(255) not null,
         isFull boolean,
         primary key(class_id)
