@@ -60,7 +60,14 @@ class Admins:
                 self.roombook(roomnum)
             
             elif(command == 'E'):
-                e_id = input("Please enter equipment ID: ")
+                self.cur.execute("""
+                        SELECT * FROM equipments
+                        """)
+                
+                equipments = self.cur.fetchall()
+                for e in equipments:
+                    print("ID: " + str(e[0]) + ", Name: " + e[1])
+                e_id = input("Please enter equipment ID to check funtionality: ")
                 self.equipment_check(e_id)
                 
             elif(command == 'P'):
@@ -77,7 +84,7 @@ class Admins:
             
     
     def class_schedules(self):
-        check = input("Would you like to (V)iew, (C)reate, (Delete) classes?: ")
+        check = input("Would you like to (V)iew, (C)reate, (D)elete classes?: ")
         check = check.upper()
         if check == 'V':
             self.cur.execute("""SELECT * 
@@ -121,38 +128,44 @@ class Admins:
                         """, (self.ID,))
             status = self.cur.fetchone()
             print("First name: " + status[0])
-        if view == 'L':
+     
+        elif view == 'L':
             self.cur.execute("""
                         SELECT last_name FROM admins WHERE admin_id = %s
                         """, (self.ID,))
             status = self.cur.fetchone()
             print("Last name: " + status[0])
-        if view == 'E':
+     
+        elif view == 'E':
             self.cur.execute("""
                         SELECT email FROM admins WHERE admin_id = %s
                         """, (self.ID,))
             status = self.cur.fetchone()
             print("Email: " + status[0])
-        if view == 'S':
+    
+        elif view == 'S':
             self.cur.execute("""
                         SELECT salary FROM admins WHERE admin_id = %s
                         """, (self.ID,))
             status = self.cur.fetchone()
-            print("Salary: " + status[0])
-        if view == 'P':
+            print("Salary: " + str(status[0]))
+      
+        elif view == 'P':
             self.cur.execute("""
                         SELECT position FROM admins WHERE admin_id = %s
                         """, (self.ID,))
             status = self.cur.fetchone()
             print("Positon: " + status[0]) 
-        
-        if view == 'A':
+      
+        elif view == 'A':
             self.cur.execute("""
                         SELECT * FROM admins WHERE admin_id = %s
                         """, (self.ID,))
             
             view = self.cur.fetchone()
-            print("ID: " + view[0] + ", First name: " + view[1] + ", Last name: " + view[2] + ", Email: " + view[3] + ", Salary: " + view[4] + ", Position: " + view[5])
+            print(view[0])
+            print(view[2])
+            print("ID: " + str(view[0]) + ", Email: " + view[1] + ", Salary: " + str(view[2]) + ", Position: " + view[3] + ", Last name: " + view[4] + ", First name: " + view[5])
 
 
     def change_name(self,new_name,F_or_L):
@@ -193,7 +206,7 @@ class Admins:
     
     def update_salary(self,new_salary):
         try: 
-            self.cur.execute("""UPDATE Admin SET salary = %s 
+            self.cur.execute("""UPDATE admins SET salary = %s 
                             WHERE admin_id = %s
                             """,(new_salary, self.ID))
             print("Salary successfully updated to " + new_salary)
@@ -231,14 +244,7 @@ class Admins:
                     SET status = %s
                     WHERE room_number = %s
                     """, (True, roomnumber))
-                                
-                # self.cur.execute("""
-                #     UPDATE rooms
-                #     SET admin_id = %s
-                #     WHERE room_number = %s
-                #     """,(self.ID,roomnumber))
-                
-                
+      
                 print("Room " + roomnumber + " has been succesfully booked!") 
 
             except Exception:
@@ -246,16 +252,18 @@ class Admins:
     
     
     def equipment_check(self,equipment_id):
-        try:
-            self.cur.execute("""SELECT status FROM equipments WHERE equipment_id = %s """, (equipment_id))
-            status = self.cur.fetchone()
-            
-            if status != (False,) : 
-                print("Equipment functional")
-            else:
-                print("Equipment under maintenance")
-        except:
-            print(equipment_id + " does not exist")
+        self.cur.execute("""SELECT status FROM equipments WHERE equipment_id = %s """, (equipment_id))
+        status = self.cur.fetchone()
+        if status != None:
+            try:
+                if status != (False,) : 
+                    print("Equipment functional")
+                else:
+                    print("Equipment under maintenance")
+            except:
+                print(equipment_id + " does not exist")
+        else:
+                print(equipment_id + " does not exist")
             
 
     def billing(self):
