@@ -136,6 +136,8 @@ class Member:
         elif command.upper() == "G":
             print("Please select a group session")
             self.schedule_group()
+        elif command.upper() == "M":
+            self.ui()
         else:
             print("Unknown command, please try again...")
             self.schedule_ui()
@@ -175,7 +177,7 @@ class Member:
         self.schedule_ui()   
 
     def schedule_group(self):
-        self.db.execute("""SELECT class_name, instructor, quantity, isFull,
+        self.db.execute("""SELECT class_name, instructor, quantity, isFull
                         FROM classes""")
         availabilities = self.db.fetchall()
         print(availabilities)
@@ -183,17 +185,17 @@ class Member:
         self.db.execute("SELECT class_id FROM classes WHERE class_name = %s", (class_name,))
         class_id = self.db.fetchone()[0]
         self.db.execute("SELECT isFull FROM classes WHERE class_id = %s", (class_id,))
-        available = self.db.fetchone()[0]
+        isFull = self.db.fetchone()[0]
         self.db.execute("SELECT capacity FROM classes WHERE class_name = %s", (class_name,))
-        class_capacity = self.db.fetchone()[0]
+        class_capacity = int(self.db.fetchone()[0])
         self.db.execute("SELECT quantity FROM classes WHERE class_name = %s", (class_name,))
-        class_quantity = self.db.fetchone()[0]
-        if available:
-            if class_capacity < class_quantity:
-                print("You've successfully joined the class!")
+        class_quantity = int(self.db.fetchone()[0])
+        if isFull == False:
+            if class_quantity < class_capacity:
                 self.db.execute("""UPDATE classes
                                     SET quantity = quantity + 1
                                     WHERE class_id = %s""", (class_id,))
+                print("You've successfully joined the class!!!")
             elif class_capacity == class_quantity + 1:
                 self.db.execute("""UPDATE classes
                                     SET quantity = quantity + 1
@@ -202,6 +204,9 @@ class Member:
                                 SET isFull = TRUE 
                                 WHERE class_id = %s""", (class_id,))
                 print("You've successfully joined the class and it is now full!") 
+            else:
+                print("Sorry not available please choose another class...")
+                self.schedule_group() 
         else:
             print("Sorry not available please choose another class...")
             self.schedule_group() 
