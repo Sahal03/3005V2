@@ -5,7 +5,7 @@ from entities.Member import Member
 #Needed Credentials to access the db
 DB_NAME = "V2"
 DB_USER = "postgres"
-DB_PASS = "069359"
+DB_PASS = "admin"
 DB_HOST = "localhost"
 DB_PORT = 5432
 

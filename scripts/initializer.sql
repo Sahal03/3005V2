@@ -6,10 +6,11 @@ DROP TABLE trainers;
 DROP TABLE rooms;
 DROP TABLE admins;
 DROP TABLE classes;
-DROP TABLE Equipment;
+DROP TABLE equipments;
 DROP TABLE exercise_routines;
 DROP TABLE fitness_achievement;
 DROP TABLE health_statistics;
+
 create table if not exists members 
     (
         member_id SERIAL,
@@ -121,7 +122,7 @@ create table if not exists classes
         primary key(class_id)
     );
 
-create table if not exists Equipment
+create table if not exists equipments
     (
         equipment_id SERIAL,
         name varchar(255) not null,
