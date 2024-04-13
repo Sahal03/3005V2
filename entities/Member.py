@@ -231,7 +231,6 @@ class Member:
         self.dashboard_ui()
 
     def display_fitness(self):
-        print("HIIIIIIIII")
         self.db.execute("SELECT * FROM fitness_achievement;")
         result = self.db.fetchall()
 
