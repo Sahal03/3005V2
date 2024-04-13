@@ -106,13 +106,7 @@ create table if not exists rooms
         primary key(room_number)
     );
 
-create table if not exists schedules
-    (
-        schedule_id SERIAL,
-        room_number int not null,
-        primary key(schedule_id),
-        foreign key(room_number) references rooms
-    );
+
 
 create table if not exists classes 
     (
