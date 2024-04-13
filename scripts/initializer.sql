@@ -26,6 +26,47 @@ create table if not exists goals
        foreign key(member_id) references members
     );
 
+create table if not exists health
+    (
+       member_id int, 
+       average_bpm FLOAT,
+       muscle_mass FLOAT,
+       weight FLOAT,
+       bmi FLOAT,
+       foreign key(member_id) references members
+    );
+
+create table if not exists exercise_routines
+(
+    exercise_id SERIAL,
+    name varchar(55),
+    duration FLOAT,
+    type varchar(15),
+    defecit int,
+    primary key(exercise_id)
+
+);
+
+create table if not exists fitness_achievement
+(
+    fitness_id SERIAL,
+    name varchar(55),
+    type varchar(15), 
+    primary key(fitness_id)
+
+);
+
+create table if not exists health_statistics
+(
+    stat_id SERIAL,
+    name varchar(55),
+    calories_burned FLOAT,
+    minutes_ran FLOAT,
+    weight_carried FLOAT,
+    primary key(stat_id)
+
+);
+
 create table if not exists trainers
     (
         trainer_id SERIAL,
