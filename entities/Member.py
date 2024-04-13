@@ -82,6 +82,21 @@ class Member:
             db.execute(f"INSERT INTO goals (member_id, weight, time, streak) VALUES ({self.ID},{self.goalWeight},{self.goalTime},{self.goalStreak})")
             db.execute(f"INSERT INTO health (member_id, average_bpm, muscle_mass, weight, bmi) VALUES ({self.ID},{self.average_bpm},{self.muscle},{self.weight}, {self.bmi})")
 
+    def ui(self):
+        print("\nWelcome ", self.fName, "!")
+        print("1: Profile Management")
+        print("2: Dashboard Display")
+        print("3: Schedule Management")
+        print("Press Any Key to Return to Main Menu")
+        choice = input("Select choice: ")
+
+        if choice == '1':
+            self.profile_ui()
+        elif choice == '2':
+            self.dashboard_ui()
+        elif choice == '3':
+            self.schedule_ui()
+
     def dashboard(self, command):
         if command == "E" or "EXERCISE" or "EXERCISE ROUTINES":
             print("Please look at the following routines! \n")
@@ -92,10 +107,20 @@ class Member:
         elif command == "H" or "HEALTH" or "STATISTICS":
             print("Please look at the following health statistics! \n")
             self.display_health(self)
+        elif command == "M" or "MAIN" or "MENU":
+            self.ui()
         else:
             print("Unknown command, please try again...")
-            self.dashboard(self,command)
+            self.dashboard_ui()
 
+    def dashboard_ui(self):
+            print("E or EXERCISE or EXERCISE ROUTINES, for exercise routines")
+            print("F or FITNESS or FITNESS ACHIEVEMENTS, for your fitness achievements")
+            print("H or HEALTH or STATISTICS, for your Health Statistics")
+            print("M or MAIN or MENU, to return to Main Menu")
+            param = input("Enter your selection: ")
+            self.dashboard(param)
+    
     def profile(self, command):
         if command == "U" or "UPDATE" or "UPDATE PERSONAL INFORMATION":
             print("Please Select what info you'd like to update from the following:")
@@ -106,9 +131,19 @@ class Member:
         elif command == "H" or "HEALTH" or "HEALTH METRICS":
             print("Please select what health metrics you'd like to update from the following:")
             self.update_health(self)
+        elif command == "M" or "MAIN" or "MENU":
+            self.ui()
         else:
             print("Unknown command, please try again...")
-            self.profile(self,command)
+            self.profile_ui()
+    
+    def profile_ui(self):
+        print("U or UPDATE or UPDATE PERSONAL INFORMATION, to update your personal information")
+        print("F or FITNESS or GOALS or FITNESS GOALS, for your fitness goals")
+        print("H or HEALTH or HEALTH METRICS, for your health metrics ")
+        print("M or MAIN or MENU, to return to Main Menu")
+        param = input("Enter your selection: ")
+        self.profile(param)
     
     def schedule(self, command):
         if command == "T" or "TRAINER":
@@ -119,8 +154,15 @@ class Member:
             self.schedule_group(self)
         else:
             print("Unknown command, please try again...")
-            self.schedule(self,command)      
-
+            self.schedule_ui()
+             
+    def schedule_ui(self):
+        print("T or TRAINER, to get a trainer")
+        print("G or GROUP, to select a group session")
+        print("M or MAIN or MENU, to return to Main Menu")
+        param = input("Enter your selection: ")
+        self.schedule(param)
+    
     def schedule_trainer(self):
         availabilities =self.db.execute("""SELECT t.first_name, t.last_name, a.Day, a.start_time, a.end_time
                         FROM trainers AS t
@@ -141,7 +183,8 @@ class Member:
                                  AND start_time = {trainer_time} """)
         else:
             print("Sorry not available please choose another day...")
-            self.schedule_trainer(self)     
+            self.schedule_trainer(self)
+        self.schedule_ui()   
     
     def schedule_group(self):
         availabilities =self.db.execute("""SELECT c.class_name, c.instructor, c.quantity, c.isFull, a.Day, a.start_time, a.end_time
@@ -174,16 +217,54 @@ class Member:
                         print("You've successfully joined the class and it is now full!") 
         else:
             print("Sorry not available please choose another class...")
-            self.schedule_group(self)    
+            self.schedule_group(self) 
+        self.schedule_ui() 
+          
 
     def display_exercise(self):
         self.db.execute("SELECT * FROM exercise_routines;")
+        result = self.db.fetchall()
+
+        print("EXERCISE ROUTINES ------- ")
+        #print exercises
+        for exercise in result:
+            for attribute in exercise:
+                print(attribute, end=" ")
+            print("")
+        print("Returning to Main Menu")
+        print("")
+        self.dashboard_ui()
 
     def display_fitness(self):
         self.db.execute("SELECT * FROM fitness_achievement;")
+        result = self.db.fetchall()
+
+        #print fitness achievements
+        print("FITNESS ACHIEVEMENTS ------- ")
+        for achievement in result:
+            for attribute in achievement:
+                print(attribute, end=" ")
+            print("")
+        print("Returning to Main Menu")
+        print("")
+        self.dashboard_ui()
+        
+        
     
     def display_health(self):
         self.db.execute("SELECT * FROM health_statistics;")
+        result = self.db.fetchall()
+
+        #print health statistics
+        print("HEALTH STATISTICS ------- ")
+        for stat in result:
+            for attribute in stat:
+                print(attribute, end=" ")
+            print("")
+        print("Returning to Main Menu")
+        print("")
+        self.dashboard_ui()
+        
 
     def update_health(self):
         name = input("(A)verage BPM, (M)uscle mass, (W)eight, (B)MI: ")          
@@ -202,37 +283,43 @@ class Member:
         else:
             print("Unknown command, please try again...")
             self.update_personal(self)
+        self.profile_ui()
 
 
     def update_personal(self):
-            name = input("(F)irst Name, (L)ast Name, (E)mail, (G)oals: ")
-            if name.upper() == "F" or "FIRST NAME" or "FIRST":
-                new_name = input("Please enter your new first name: ")
-                self.change_name(self, new_name, 0)
-            elif name.upper() == "L" or "LAST NAME" or "LAST":
-                new_name = input("Please enter your new last name: ")
-                self.change_name(self, new_name, 1)
-            elif name.upper() == "E" or "EMAIL":
-                new_email = input("Please input new email: ")
-                self.change_name(self, new_email, 2)
-            else:
-                print("Unknown command, please try again...")
-                self.update_personal(self)
+        name = input("(F)irst Name, (L)ast Name, (E)mail, (G)oals: ")
+        if name.upper() == "F" or "FIRST NAME" or "FIRST":
+            new_name = input("Please enter your new first name: ")
+            self.change_name(self, new_name, 0)
+        elif name.upper() == "L" or "LAST NAME" or "LAST":
+            new_name = input("Please enter your new last name: ")
+            self.change_name(self, new_name, 1)
+        elif name.upper() == "E" or "EMAIL":
+            new_email = input("Please input new email: ")
+            self.change_name(self, new_email, 2)
+        else:
+            print("Unknown command, please try again...")
+            self.update_personal(self)
+        self.profile_ui()
+            
+            
 
     def update_goal(self):
-            new_goals = input("Please select from the following goals, (W)eight, (T)ime, (S)treak: ")
-            if new_goals.upper == "W" or "WEIGHT":
-                new_goalWeight = input("Please select weight goal: ")
-                self.change_goal(self, new_goalWeight, 0)
-            elif new_goals.upper == "T" or "TIME":
-                new_goalTime = input("Please select time goal: ")
-                self.change_goal(self, new_goalTime, 1)
-            elif new_goals.upper == "S" or "STREAK":
-                new_goalStreak = input("Please input your new streak!: ")
-                self.change_goal(self, new_goalStreak, 2)
-            else:
-                print("Unknown command, please try again...")
-                self.update_goal(self)
+        new_goals = input("Please select from the following goals, (W)eight, (T)ime, (S)treak: ")
+        if new_goals.upper == "W" or "WEIGHT":
+            new_goalWeight = input("Please select weight goal: ")
+            self.change_goal(self, new_goalWeight, 0)
+        elif new_goals.upper == "T" or "TIME":
+            new_goalTime = input("Please select time goal: ")
+            self.change_goal(self, new_goalTime, 1)
+        elif new_goals.upper == "S" or "STREAK":
+            new_goalStreak = input("Please input your new streak!: ")
+            self.change_goal(self, new_goalStreak, 2)
+        else:
+            print("Unknown command, please try again...")
+            self.update_goal(self)
+        self.profile_ui()
+            
 
     def change_health(self, new_health, option):
         if option == 0:

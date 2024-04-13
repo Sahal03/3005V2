@@ -1,7 +1,7 @@
 import psycopg2 as ps
 from entities.Trainer import Trainer
 from entities.Admins import Admins
-
+from entities.Member import Member
 #Needed Credentials to access the db
 DB_NAME = "V2"
 DB_USER = "postgres"
@@ -41,7 +41,40 @@ def mainMenu():
         print("Have a good day")
 
 def memberPrompt():
-    return
+    email = input("Please enter your email to sign in: ")
+    member = None
+    cursor.execute("SELECT * FROM trainers WHERE email=%s",(email,))
+
+    memberResult = cursor.fetchone()
+
+    if memberResult is None:
+        print("Member not found")
+        choice = input("Would you like to register a new member? (YES/NO)")
+        if choice == 'YES':
+            registerMember(member)
+        elif choice == 'NO':
+            print("1. Return to sign in")
+            print("2. Return to main menu")
+            inp = input("Select: ")
+            if inp == '1':
+                memberPrompt()
+            else:
+                mainMenu()
+        else:
+            mainMenu()
+    else:
+        member = Member(memberResult[1],memberResult[2],memberResult[3],cursor)
+        member.ui()
+        mainMenu()
+
+def registerMember(member):
+    fName = input("Please enter your first name: ")
+    lName = input("Please enter your last name: ")
+    email = input("Please enter your email: ")
+    member = Member(fName,lName,email,cursor)
+    member.ui()
+    mainMenu()
+
 
 def trainerPrompt():
     email = input("Please enter your email to sign in: ")
@@ -73,7 +106,7 @@ def adminPrompt():
         print("Admin not found")
         choice = input("Press 1 to try again or anykey to return to main menu.")
         if choice == '1':
-            trainerPrompt()
+            adminPrompt()
         else:
             mainMenu()
     else:
