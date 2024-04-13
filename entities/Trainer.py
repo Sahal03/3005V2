@@ -17,6 +17,7 @@ class Trainer:
         self.salary = salary
 
     def profile(self):
+        print("")
         print("\nWelcome Trainer!")
         print("1: Manage your Availabilities")
         print("2: Search for Members")
@@ -32,6 +33,7 @@ class Trainer:
         # view availabilities
         self.viewAvailabilities()
         # add availability
+        print("")
         print("1: Add New Availability")
         print("2: Return to Profile")
         choice = input("Select choice: ")
@@ -39,8 +41,6 @@ class Trainer:
             self.addAvailability()
         else:
             self.profile()
-        self.profile()
-        return 
     
     def viewAvailabilities(self):
         self.cursor.execute("SELECT * FROM availabilities WHERE trainer_id=%s",(self.id,))
@@ -50,6 +50,7 @@ class Trainer:
         print("")
     
     def addAvailability(self):
+        print("")
         date = input("Enter the Date (YYYY-MM--DD): ")
         start = input("Enter the start time (HH:MM:SS): ")
         end = input("Enter the end time (HH:MM:SS): ")
@@ -58,11 +59,11 @@ class Trainer:
         
     def searchMember(self):
         # prompt user for name 
-        fName = input("Enter the member's first name: ")
-        lName = input("Enter the member's last name: ")
-
+        print("")
+        fName = input("Search by first name: ")
+        fName = "%" + fName + "%"
         # execute query
-        self.cursor.execute("SELECT * FROM members WHERE first_name=%s AND last_name=%s",(fName,lName))
+        self.cursor.execute("SELECT * FROM members WHERE first_name LIKE %s",(fName,))
         result = self.cursor.fetchall()
 
         #print result

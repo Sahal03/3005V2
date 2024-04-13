@@ -109,7 +109,7 @@ VALUES
     ('Example Example', 10, 15, 'Mindfulness Meditation', FALSE);
 
 
-INSERT INTO Equipment (name, status)
+INSERT INTO equipments (name, status)
 VALUES 
     ('Treadmill', TRUE),
     ('Dumbbells', TRUE),
