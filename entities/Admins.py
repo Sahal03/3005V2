@@ -175,53 +175,75 @@ class Admins:
         
     def view_info(self):
         print("What infomation would you like to view?")
-        view = input("(F)irst Name, (L)ast Name, (E)mail, (S)alary, (P)osition, (A)ll: ")
-        view = view.upper()
+        type = input("(M)ember, (T)rainer, (A)dmin: ")
+        type = type.upper()
         
-        if view == 'F':
-            self.cur.execute("""
-                        SELECT first_name FROM admins WHERE admin_id = %s
-                        """, (self.ID,))
-            status = self.cur.fetchone()
-            print("First name: " + status[0])
-     
-        elif view == 'L':
-            self.cur.execute("""
-                        SELECT last_name FROM admins WHERE admin_id = %s
-                        """, (self.ID,))
-            status = self.cur.fetchone()
-            print("Last name: " + status[0])
-     
-        elif view == 'E':
-            self.cur.execute("""
-                        SELECT email FROM admins WHERE admin_id = %s
-                        """, (self.ID,))
-            status = self.cur.fetchone()
-            print("Email: " + status[0])
-    
-        elif view == 'S':
-            self.cur.execute("""
-                        SELECT salary FROM admins WHERE admin_id = %s
-                        """, (self.ID,))
-            status = self.cur.fetchone()
-            print("Salary: " + str(status[0]))
-      
-        elif view == 'P':
-            self.cur.execute("""
-                        SELECT position FROM admins WHERE admin_id = %s
-                        """, (self.ID,))
-            status = self.cur.fetchone()
-            print("Positon: " + status[0]) 
-      
-        elif view == 'A':
-            self.cur.execute("""
-                        SELECT * FROM admins WHERE admin_id = %s
-                        """, (self.ID,))
+        if type == 'A':
+            view = input("(F)irst Name, (L)ast Name, (E)mail, (S)alary, (P)osition, (A)ll: ")
+            view = view.upper()
             
-            view = self.cur.fetchone()
-            print(view[0])
-            print(view[2])
-            print("ID: " + str(view[0]) + ", Email: " + view[1] + ", Salary: " + str(view[2]) + ", Position: " + view[3] + ", Last name: " + view[4] + ", First name: " + view[5])
+            if view == 'F':
+                self.cur.execute("""
+                            SELECT first_name FROM admins WHERE admin_id = %s
+                            """, (self.ID,))
+                status = self.cur.fetchone()
+                print("First name: " + status[0])
+        
+            elif view == 'L':
+                self.cur.execute("""
+                            SELECT last_name FROM admins WHERE admin_id = %s
+                            """, (self.ID,))
+                status = self.cur.fetchone()
+                print("Last name: " + status[0])
+        
+            elif view == 'E':
+                self.cur.execute("""
+                            SELECT email FROM admins WHERE admin_id = %s
+                            """, (self.ID,))
+                status = self.cur.fetchone()
+                print("Email: " + status[0])
+        
+            elif view == 'S':
+                self.cur.execute("""
+                            SELECT salary FROM admins WHERE admin_id = %s
+                            """, (self.ID,))
+                status = self.cur.fetchone()
+                print("Salary: " + str(status[0]))
+        
+            elif view == 'P':
+                self.cur.execute("""
+                            SELECT position FROM admins WHERE admin_id = %s
+                            """, (self.ID,))
+                status = self.cur.fetchone()
+                print("Positon: " + status[0]) 
+        
+            elif view == 'A':
+                self.cur.execute("""
+                            SELECT * FROM admins WHERE admin_id = %s
+                            """, (self.ID,))
+                
+                view = self.cur.fetchone()
+                print(view[0])
+                print(view[2])
+                print("ID: " + str(view[0]) + ", Email: " + view[1] + ", Salary: " + str(view[2]) + ", Position: " + view[3] + ", Last name: " + view[4] + ", First name: " + view[5])
+        
+        elif type == 'M':
+            self.cur.execute("""SELECT * FROM members""")
+            status = self.cur.fetchall()
+            
+            for members in status:
+                print("ID: " + str(members[0]) + ", First name: " + members[1] + ", Last name: " + members[2] + ", Email: " + members[3])
+        
+        elif type == 'T':
+            self.cur.execute("""SELECT * FROM trainers""")
+            status = self.cur.fetchall()
+            
+            for trainers in status:
+                print("ID: " + (str(trainers[0])) + ", First name: " + trainers[1] + ", Last name: " + trainers[2] + ", Email: " + trainers[3] + ", Salary: " + str(trainers[4]))
+            
+            
+        
+
 
 
     def change_name(self,new_name,F_or_L):
