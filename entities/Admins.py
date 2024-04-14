@@ -84,17 +84,12 @@ class Admins:
             
     
     def class_schedules(self):
-        check = input("Would you like to (V)iew, (C)reate, (D)elete classes?: ")
+        check = input("Would you like to (V)iew, (E)dit, (C)reate, (D)elete classes?: ")
         check = check.upper()
         if check == 'V':
-            self.cur.execute("""SELECT * 
-                             FROM classes""")
-            
-            classes_view = self.cur.fetchall()
-            
-            for classes in classes_view:
-                print(classes)
-        
+            self.class_view()
+        elif check == 'E':
+            self.class_updater()
         elif check == 'C':
             name = input("Please enter instructor name: ")
             quantity = 0
@@ -114,7 +109,68 @@ class Admins:
                 self.cur.execute("""DELETE FROM classes WHERE class_id = %s""",(class_id,))
                 print("Class successfully deleted!")
             except Exception:
-                print("Failed to delete class!")            
+                print("Failed to delete class!")                
+
+    def class_view(self):
+        self.cur.execute("""SELECT * 
+                            FROM classes""")
+        
+        classes_view = self.cur.fetchall()
+        
+        for classes in classes_view:
+            print(classes)
+        
+    def class_updater(self):
+        self.class_view()
+
+        id = input("Enter the id of the class you wish to update: ")
+        # instructor, quantity, capacity, class_name, isFull
+        print("1. Change instructor")
+        print("2. Update Class Quantity")
+        print("3. Update Class Capacity")
+        print("4. Update Class Name")
+        selection = input("Edit Selection: ")
+
+        if selection == '1':
+            newInstructor = input("Input New Instructor: ")
+            self.cur.execute("UPDATE classes SET instructor=%s WHERE class_id=%s",(newInstructor,int(id)))
+        elif selection == '2':
+            newQuantity = input("Input New Quantity: ")
+            self.cur.execute("SELECT capacity FROM classes WHERE class_id=%s",(int(id),))
+            capacity = self.cur.fetchone()[0]
+            if int(newQuantity) > capacity or int(newQuantity) < 0:
+                print("Invalid quantity entered... try again")
+                self.class_updater()
+            else:
+                self.cur.execute("UPDATE classes SET quantity=%s WHERE class_id=%s",(int(newQuantity),int(id)))
+                if(int(newQuantity) == capacity):
+                    self.cur.execute("UPDATE classes SET isFull=TRUE WHERE class_id=%s",(int(id),))
+                else:
+                    self.cur.execute("SELECT isFull FROM classes WHERE class_id=%s",(int(id),))
+                    isFull = self.cur.fetchone()[0]
+                    if isFull == True:
+                        self.cur.execute("UPDATE classes SET isFull=FALSE WHERE class_id=%s",(int(id),))
+        elif selection == '3':
+            newCapacity = input("Input New Capacity: ")
+            self.cur.execute("SELECT quantity FROM classes WHERE class_id=%s",(int(id),))
+            quantity = self.cur.fetchone()[0]
+
+            if int(newCapacity) < quantity:
+                print("Please enter new quantity and try again")
+                self.class_updater()
+            else:
+               self.cur.execute("UPDATE classes SET capacity=%s WHERE class_id=%s",(int(newCapacity),int(id)))
+               if int(newCapacity) == quantity:
+                   self.cur.execute("UPDATE classes SET isFull=TRUE WHERE class_id=%s",(int(id),))
+               else:
+                    self.cur.execute("SELECT isFull FROM classes WHERE class_id=%s",(int(id),))
+                    isFull = self.cur.fetchone()[0]
+                    if isFull == True:
+                        self.cur.execute("UPDATE classes SET isFull=FALSE WHERE class_id=%s",(int(id),))
+        elif selection == '4':
+            newName = input("Input New Class Name: ")
+            self.cur.execute("UPDATE classes SET class_name=%s WHERE class_id=%s",(newName,int(id)))
+        
         
         
     def view_info(self):
