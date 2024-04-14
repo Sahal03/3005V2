@@ -16,7 +16,7 @@ create table if not exists members
         member_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        email varchar(255),
+        email varchar(255) not null unique,
         primary key(member_id)
     );
 
@@ -75,7 +75,7 @@ create table if not exists trainers
         trainer_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        email varchar(255),
+        email varchar(255) not null unique,
         salary FLOAT,
         primary key(trainer_id)
     );
@@ -93,7 +93,7 @@ create table if not exists availabilities
 create table if not exists admins
     (
         admin_id SERIAL,
-        email varchar(255),
+        email varchar(255) not null unique,
         salary FLOAT,
         position varchar(255),
         last_name varchar(255) not null,
