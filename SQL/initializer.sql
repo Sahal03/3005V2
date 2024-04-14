@@ -126,5 +126,6 @@ create table if not exists equipments
     (
         equipment_id SERIAL,
         name varchar(255) not null,
-        status boolean
+        status boolean,
+        primary key(equipment_id)
     );
