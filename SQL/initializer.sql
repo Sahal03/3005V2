@@ -1,9 +1,9 @@
 DROP TABLE goals;
 DROP TABLE health;
 DROP TABLE fitness_achievement;
-DROP TABLE members;
 DROP TABLE availabilities;
 DROP TABLE trainers;
+DROP TABLE members;
 DROP TABLE classes;
 DROP TABLE equipments;
 DROP TABLE rooms;
@@ -93,7 +93,9 @@ create table if not exists availabilities
         start_time TIME not null,
         end_time TIME not null,
         available boolean,
-        foreign key(trainer_id) references trainers
+        member_id int,
+        foreign key(trainer_id) references trainers,
+        foreign key(member_id) references members
     );
 
 create table if not exists admins
