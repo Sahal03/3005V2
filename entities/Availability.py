@@ -7,7 +7,7 @@ class Availability:
         self.start = start
         self.end = end
         self.cursor = cur
-        self.cursor.execute("INSERT INTO availabilities (trainer_id, day, start_time,end_time) VALUES (%s, %s, %s, %s);", (id,day,start,end))
+        self.cursor.execute("INSERT INTO availabilities (trainer_id, day, start_time,end_time,available) VALUES (%s, %s, %s, %s,TRUE);", (id,day,start,end))
 
     def isAvailable(self,day,start,end):
         if day!=self.day:
