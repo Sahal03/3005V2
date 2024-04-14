@@ -225,8 +225,6 @@ class Admins:
                             """, (self.ID,))
                 
                 view = self.cur.fetchone()
-                print(view[0])
-                print(view[2])
                 print("ID: " + str(view[0]) + ", Email: " + view[1] + ", Salary: " + str(view[2]) + ", Position: " + view[3] + ", Last name: " + view[4] + ", First name: " + view[5])
         
         elif type == 'M':
