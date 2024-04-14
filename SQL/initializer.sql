@@ -1,15 +1,26 @@
 DROP TABLE goals;
 DROP TABLE health;
+DROP TABLE fitness_achievement;
 DROP TABLE members;
 DROP TABLE availabilities;
 DROP TABLE trainers;
-DROP TABLE rooms;
-DROP TABLE admins;
 DROP TABLE classes;
 DROP TABLE equipments;
+DROP TABLE rooms;
+DROP TABLE admins;
 DROP TABLE exercise_routines;
-DROP TABLE fitness_achievement;
 DROP TABLE health_statistics;
+
+create table if not exists exercise_routines
+(
+    exercise_id SERIAL,
+    name varchar(55),
+    duration FLOAT,
+    type varchar(15),
+    defecit int,
+    primary key(exercise_id)
+
+);
 
 create table if not exists members 
     (
@@ -17,7 +28,9 @@ create table if not exists members
         first_name varchar(255) not null,
         last_name varchar(255) not null,
         email varchar(255) not null unique,
-        primary key(member_id)
+        routine_id int,
+        primary key(member_id),
+        foreign key(routine_id) references exercise_routines
     );
 
 create table if not exists goals
@@ -39,23 +52,16 @@ create table if not exists health
        foreign key(member_id) references members
     );
 
-create table if not exists exercise_routines
-(
-    exercise_id SERIAL,
-    name varchar(55),
-    duration FLOAT,
-    type varchar(15),
-    defecit int,
-    primary key(exercise_id)
 
-);
 
 create table if not exists fitness_achievement
 (
     fitness_id SERIAL,
     name varchar(55),
     type varchar(15), 
-    primary key(fitness_id)
+    member_id int,
+    primary key(fitness_id),
+    foreign key(member_id) references members
 
 );
 
@@ -119,7 +125,11 @@ create table if not exists classes
         capacity int,
         class_name varchar(255) not null,
         isFull boolean,
-        primary key(class_id)
+        admin_id int,
+        room_id int,
+        primary key(class_id),
+        foreign key (admin_id) references admins,
+        foreign key(room_id) references rooms
     );
 
 create table if not exists equipments
@@ -127,5 +137,7 @@ create table if not exists equipments
         equipment_id SERIAL,
         name varchar(255) not null,
         status boolean,
-        primary key(equipment_id)
+        room_id int,
+        primary key(equipment_id),
+        foreign key(room_id) references rooms
     );
