@@ -45,7 +45,7 @@ class Trainer:
         self.cursor.execute("SELECT * FROM availabilities WHERE trainer_id=%s",(self.id,))
         result = self.cursor.fetchall()
         for avail in result:
-            print(avail[1]," from ", avail[2], " to ",avail[3])
+            print(avail[1]," from ", avail[2], " to ",avail[3], " available: ",avail[4])
         print("")
     
     def addAvailability(self):
