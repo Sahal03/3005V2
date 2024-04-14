@@ -52,16 +52,17 @@ class Member:
             self.fName = fName
             self.lName = lName
             self.EMAIL = EMAIL
-            self.goalWeight = "Not set"
-            self.goalTime = "Not set"
-            self.goalStreak = "Not set"
-            self.average_bpm = "Not set"
-            self.muscle = "Not set"
-            self.weight = "Not set"
-            self.bmi = "Not set"
+            self.goalWeight = None
+            self.goalTime = None
+            self.goalStreak = None
+            self.average_bpm = None
+            self.muscle = None
+            self.weight = None
+            self.bmi = None
             self.db = db
 
-            db.execute("INSERT INTO members (fName, lName, email) VALUES (%s, %s, %s)", (fName, lName, EMAIL))
+            db.execute("INSERT INTO members (first_name, last_name, email) VALUES (%s, %s, %s)", (fName, lName, EMAIL))
+            db.execute("SELECT member_id FROM members ORDER BY member_id DESC LIMIT 1;")
             self.ID = db.fetchone()[0]
             db.execute("INSERT INTO goals (member_id, weight, time, streak) VALUES (%s,%s,%s,%s)", (self.ID, self.goalWeight, self.goalTime, self.goalStreak))
             db.execute("INSERT INTO health (member_id, average_bpm, muscle_mass, weight, bmi) VALUES (%s,%s,%s,%s,%s)", (self.ID, self.average_bpm, self.muscle, self.weight, self.bmi))

@@ -124,7 +124,6 @@ class Admins:
         self.class_view()
 
         id = input("Enter the id of the class you wish to update: ")
-        # instructor, quantity, capacity, class_name, isFull
         print("1. Change instructor")
         print("2. Update Class Quantity")
         print("3. Update Class Capacity")
@@ -170,6 +169,9 @@ class Admins:
         elif selection == '4':
             newName = input("Input New Class Name: ")
             self.cur.execute("UPDATE classes SET class_name=%s WHERE class_id=%s",(newName,int(id)))
+        else:
+            print("Invalid input. Please enter either 1,2,3 or 4 when shown edit menu.")
+            self.class_updater()
         
         
         

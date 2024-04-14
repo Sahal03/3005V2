@@ -1,23 +1,36 @@
 DROP TABLE goals;
 DROP TABLE health;
-DROP TABLE members;
+DROP TABLE fitness_achievement;
 DROP TABLE availabilities;
 DROP TABLE trainers;
-DROP TABLE rooms;
-DROP TABLE admins;
+DROP TABLE members;
 DROP TABLE classes;
 DROP TABLE equipments;
+DROP TABLE rooms;
+DROP TABLE admins;
 DROP TABLE exercise_routines;
-DROP TABLE fitness_achievement;
 DROP TABLE health_statistics;
+
+create table if not exists exercise_routines
+(
+    exercise_id SERIAL,
+    name varchar(55),
+    duration FLOAT,
+    type varchar(15),
+    defecit int,
+    primary key(exercise_id)
+
+);
 
 create table if not exists members 
     (
         member_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        email varchar(255),
-        primary key(member_id)
+        email varchar(255) not null unique,
+        routine_id int,
+        primary key(member_id),
+        foreign key(routine_id) references exercise_routines
     );
 
 create table if not exists goals
@@ -39,23 +52,16 @@ create table if not exists health
        foreign key(member_id) references members
     );
 
-create table if not exists exercise_routines
-(
-    exercise_id SERIAL,
-    name varchar(55),
-    duration FLOAT,
-    type varchar(15),
-    defecit int,
-    primary key(exercise_id)
 
-);
 
 create table if not exists fitness_achievement
 (
     fitness_id SERIAL,
     name varchar(55),
     type varchar(15), 
-    primary key(fitness_id)
+    member_id int,
+    primary key(fitness_id),
+    foreign key(member_id) references members
 
 );
 
@@ -75,7 +81,7 @@ create table if not exists trainers
         trainer_id SERIAL,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
-        email varchar(255),
+        email varchar(255) not null unique,
         salary FLOAT,
         primary key(trainer_id)
     );
@@ -87,13 +93,15 @@ create table if not exists availabilities
         start_time TIME not null,
         end_time TIME not null,
         available boolean,
-        foreign key(trainer_id) references trainers
+        member_id int,
+        foreign key(trainer_id) references trainers,
+        foreign key(member_id) references members
     );
 
 create table if not exists admins
     (
         admin_id SERIAL,
-        email varchar(255),
+        email varchar(255) not null unique,
         salary FLOAT,
         position varchar(255),
         last_name varchar(255) not null,
@@ -119,12 +127,19 @@ create table if not exists classes
         capacity int,
         class_name varchar(255) not null,
         isFull boolean,
-        primary key(class_id)
+        admin_id int,
+        room_id int,
+        primary key(class_id),
+        foreign key (admin_id) references admins,
+        foreign key(room_id) references rooms
     );
 
 create table if not exists equipments
     (
         equipment_id SERIAL,
         name varchar(255) not null,
-        status boolean
+        status boolean,
+        room_id int,
+        primary key(equipment_id),
+        foreign key(room_id) references rooms
     );

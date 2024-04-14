@@ -3,8 +3,7 @@ from entities.Availability import Availability
 
 class Trainer:
     def __init__(self, id, fName, lName,email,salary,cur):
-        self.availabilities = []
-        self.cursor = cur
+        self.cursor = cur        
         
         if id == None:
             self.cursor.execute("INSERT INTO trainers (first_name,last_name,email,salary) VALUES (%s, %s, %s, %s);",(fName,lName,email,salary))
@@ -46,7 +45,7 @@ class Trainer:
         self.cursor.execute("SELECT * FROM availabilities WHERE trainer_id=%s",(self.id,))
         result = self.cursor.fetchall()
         for avail in result:
-            print(avail[1]," from ", avail[2], " to ",avail[3])
+            print(avail[1]," from ", avail[2], " to ",avail[3], " available: ",avail[4])
         print("")
     
     def addAvailability(self):
@@ -54,7 +53,7 @@ class Trainer:
         date = input("Enter the Date (YYYY-MM--DD): ")
         start = input("Enter the start time (HH:MM:SS): ")
         end = input("Enter the end time (HH:MM:SS): ")
-        self.availabilities.append(Availability(self.id,date,start,end,self.cursor))
+        Availability(self.id,date,start,end,self.cursor)
         self.manageAvail()
         
     def searchMember(self):
